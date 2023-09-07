@@ -89,4 +89,4 @@ vpc:
 
 addons:
   - name: aws-ebs-csi-driver
-    serviceAccountRoleARN: arn:aws:iam::096791037869:role/AmazonEKS_EBS_CSI_DriverRole
+    serviceAccountRoleARN: arn:aws:iam::11223334444:role/AmazonEKS_EBS_CSI_DriverRole
