@@ -1,0 +1,88 @@
+Install eksctl
+helm
+
+
+1. Create Cluster
+eksctl create cluster --name microservices-demo --region us-east-1 --node-type t4g.medium --nodes 2
+
+2. add helm repos
+
+helm repo add cilium https://helm.cilium.io
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+helm repo add minio https://operator.min.io
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo add strimzi https://strimzi.io/charts
+helm repo add elastic https://helm.elastic.co
+
+3. Helm charts to deploy
+helm install prometheus prometheus-community/kube-prometheus-stack
+
+4. Create deployment
+kubectl apply -f ./release/kubernetes-manifests.yaml
+
+
+-------
+In prod - you would configure ingress - point ingress rules to prometheus grafana
+
+
+------------------
+# create cluster
+eksctl create cluster --name microservices-demo --region us-east-1 --node-type t4g.medium --nodes 2
+
+# policies to be checked
+https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html
+
+export cluster_name=my-cluster
+oidc_id=$(aws eks describe-cluster --name $cluster_name --query "cluster.identity.oidc.issuer" --output text | cut -d '/' -f 5)
+
+aws iam list-open-id-connect-providers | grep $oidc_id | cut -d "/" -f4
+
+eksctl utils associate-iam-oidc-provider --cluster $cluster_name --approve
+
+# create service account 
+eksctl create iamserviceaccount \
+  --name aws-node \
+  --namespace kube-system \
+  --region=us-east-1
+  --cluster $EKS_CLUSTER_NAME \
+  --role-name "AmazonEKSVPCCNIRole" \
+  --attach-policy-arn arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy \
+  --override-existing-serviceaccounts \
+  --approve
+
+# Check with the following that aws-node pods exist
+kubectl get pods -n kube-system -l k8s-app=aws-node
+
+# create IAM policy to use amazon EBS as persistent volume storage for kubernetes
+Reference: https://docs.aws.amazon.com/eks/latest/userguide/csi-iam-role.html
+
+curl -sSL -o ebs-csi-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-ebs-csi-driver/master/docs/example-iam-policy.json
+
+export EBS_CSI_POLICY_NAME=AmazonEBSCSIPolicy
+aws iam create-policy \
+--region us-east-1 \
+--policy-name $EBS_CSI_POLICY_NAME \
+--policy-document file://ebs-csi-policy.json
+
+# attach the new policy to Kubernetes service account
+eksctl create iamserviceaccount \
+  --cluster microservices-demo-new \
+  --name ebs-csi-controller-irsa \
+  --namespace kube-system \
+  --attach-policy-arn $EBS_CSI_POLICY_ARN \
+  --override-existing-serviceaccounts --approve 
+
+# install aws-ebs-csi-driver - do this as an aws managed addon
+https://docs.aws.amazon.com/eks/latest/userguide/managing-ebs-csi.html#adding-ebs-csi-eks-add-on
+
+aws eks describe-addon-versions --addon-name aws-ebs-csi-driver
+
+eksctl create addon --name aws-ebs-csi-driver --cluster microservices-demo-new --service-account-role-arn arn:aws:iam::096791037869:role/AmazonEKS_EBS_CSI_DriverRole --force
+
+eksctl get addon --name aws-ebs-csi-driver --cluster microservices-demo-new
+
+eksctl update addon --name aws-ebs-csi-driver --version v1.22.0-eksbuild.2 --cluster microservices-demo-new --force
+
+

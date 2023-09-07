@@ -1,0 +1,12 @@
+Create config yaml files:
+eksctl create cluster -f 01-cluster-config.yaml
+
+kubectl create namespace monitoring
+helm install prometheus prometheus-community/kube-prometheus-stack -f kube-prometheus-stack.yaml -n monitoring
+
+kubectl apply -f ./release/kubernetes-manifests.yaml
+
+helm install tetragon cilium/tetragon -n kube-system
+
+helm install tetragon cilium/tetragon -f tetragon.yaml -n kube-system
+
