@@ -23,7 +23,7 @@ kubernetesNetworkConfig:
 
 managedNodeGroups:
 - amiFamily: AmazonLinux2
-  desiredCapacity: 2
+  desiredCapacity: 3
   disableIMDSv1: true
   disablePodIMDS: false
     #  taints:

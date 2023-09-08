@@ -10,3 +10,14 @@ helm install tetragon cilium/tetragon -n kube-system
 
 helm install tetragon cilium/tetragon -f tetragon.yaml -n kube-system
 
+Install EFK stack:
+
+kubectl apply -f efk/kube-logging-namespace.yaml
+
+ES:
+
+kubectl create -f elasticsearch_service.yaml
+kubectl create -f elasticsearch_statefulset.yaml
+kubectl rollout status sts/es-cluster --namespace=kube-logging
+
+# debug -> kubectl port-forward es-cluster-0 9200:9200 --namespace=kube-logging
