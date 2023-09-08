@@ -26,3 +26,5 @@ kubectl create -f kibana.yaml
 kubectl rollout status deployment/kibana --namespace=kube-logging
 
 # debug -> kubectl port-forward kibana-6c9fb4b5b7-plbg2 5601:5601 --namespace=kube-logging // replace pod name
+
+kubectl create -f filebeat-kubernetes.yaml
