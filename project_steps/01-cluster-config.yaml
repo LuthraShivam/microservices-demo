@@ -46,7 +46,7 @@ managedNodeGroups:
       imageBuilder: false
       xRay: false
   instanceSelector: {}
-  instanceType: t3a.medium
+  instanceType: t3a.large
   labels:
     alpha.eksctl.io/cluster-name: microservices-demo
     alpha.eksctl.io/nodegroup-name: ng-2a0e1baa
@@ -61,9 +61,6 @@ managedNodeGroups:
   securityGroups:
     withLocal: null
     withShared: null
-  ssh:
-    allow: false
-    publicKeyPath: ""
   tags:
     alpha.eksctl.io/nodegroup-name: ng-2a0e1baa
     alpha.eksctl.io/nodegroup-type: managed

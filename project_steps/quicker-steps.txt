@@ -4,27 +4,35 @@ eksctl create cluster -f 01-cluster-config.yaml
 kubectl create namespace monitoring
 helm install prometheus prometheus-community/kube-prometheus-stack -f kube-prometheus-stack.yaml -n monitoring
 
-kubectl apply -f ./release/kubernetes-manifests.yaml
-
-helm install tetragon cilium/tetragon -n kube-system
-
-helm install tetragon cilium/tetragon -f tetragon.yaml -n kube-system
-
+__________________________________________________________
 Install EFK stack:
 
 kubectl apply -f efk/kube-logging-namespace.yaml
 
 ES:
 
-kubectl create -f elasticsearch_service.yaml
-kubectl create -f elasticsearch_statefulset.yaml
+kubectl create -f efk/elasticsearch_service.yaml
+kubectl create -f efk/elasticsearch_statefulset.yaml
 kubectl rollout status sts/es-cluster --namespace=kube-logging
 
 # debug -> kubectl port-forward es-cluster-0 9200:9200 --namespace=kube-logging
 
-kubectl create -f kibana.yaml
+kubectl create -f efk/kibana.yaml
 kubectl rollout status deployment/kibana --namespace=kube-logging
 
 # debug -> kubectl port-forward kibana-6c9fb4b5b7-plbg2 5601:5601 --namespace=kube-logging // replace pod name
 
+__________________________________________________________
+
+helm install tetragon cilium/tetragon -n kube-system
+
+helm install tetragon cilium/tetragon -f tetragon.yaml -n kube-system
+
+__________________________________________________________
+
+
 kubectl create -f filebeat-kubernetes.yaml
+
+__________________________________________________________
+
+kubectl apply -f ./release/kubernetes-manifests.yaml

@@ -34,7 +34,7 @@ serviceLabelsOverride: {}
 # https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
 dnsPolicy: Default
 # exportDirectory specifies directory to put Hubble and FGS JSON export files.
-exportDirectory: "/var/run/cilium/tetragon"
+exportDirectory: "/var/log/cilium/tetragon"
 # exportFileRotationInterval specifies file creation interval for hubble-export-s3.
 exportFileCreationInterval: "120s"
 #
@@ -88,7 +88,7 @@ tetragon:
   #
   exportDenyList: |-
     {"health_check":true}
-    {"namespace":["", "cilium", "kube-system"]}
+    {"namespace":["", "cilium", "kube-system", "kube-logging"]}
   # Filters to include or exclude fields from Tetragon events. Without any filters, all
   # fields are included by default. The presence of at least one inclusion filter implies
   # default-exclude (i.e. any fields that don't match an inclusion filter will be

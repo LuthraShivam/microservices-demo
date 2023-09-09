@@ -114,7 +114,7 @@ data:
     filebeat.inputs:
     - type: filestream
       paths:
-        - /var/run/cilium/tetragon/*.log
+        - /var/log/cilium/tetragon/tetragon.log
       json.keys_under_root: true
       json.add_error_key: true
       json.message_key: message  
