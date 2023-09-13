@@ -24,14 +24,12 @@ kubectl rollout status deployment/kibana --namespace=kube-logging
 
 __________________________________________________________
 
-helm install tetragon cilium/tetragon -n kube-system
-
 helm install tetragon cilium/tetragon -f tetragon.yaml -n kube-system
 
 __________________________________________________________
 
 
-kubectl create -f filebeat-kubernetes.yaml
+kubectl create -f efk/filebeat-kubernetes.yaml
 
 __________________________________________________________
 
