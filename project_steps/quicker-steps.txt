@@ -33,4 +33,18 @@ kubectl create -f efk/filebeat-kubernetes.yaml
 
 __________________________________________________________
 
-kubectl apply -f ./release/kubernetes-manifests.yaml
+kubectl apply -f ../release/kubernetes-manifests.yaml
+
+
+__________________________________________________________
+
+Privileged Pod tests:
+1. Deploy privileged pod:
+
+kubectl apply -f tracing_policies/privileged-pod.yaml
+
+kubectl exec -it shivam-privilege-app -- bash
+
+For single mining binary sigkill:
+
+kubectl apply -f tracing_policies/mining-binary-sigkill.yaml
