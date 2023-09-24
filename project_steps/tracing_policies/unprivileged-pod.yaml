@@ -4,9 +4,11 @@ metadata:
   name: shivam-unprivilege-app
   namespace: default
 spec:
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 3000
+    fsGroup: 2000
   containers:
   - name: centos
     image: centos
     command: ['sh', '-c', 'sleep 9999']
-    securityContext:
-       privileged: false
