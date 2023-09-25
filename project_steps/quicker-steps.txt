@@ -11,17 +11,19 @@ kubectl apply -f efk/kube-logging-namespace.yaml
 
 ES:
 
-kubectl create -f efk/elasticsearch_service.yaml
-kubectl create -f efk/elasticsearch_statefulset.yaml
+kubectl create -f efk/elasticsearchelasticsearch_service.yaml
+kubectl create -f efk/elasticsearchelasticsearch_statefulset.yaml
 kubectl rollout status sts/es-cluster --namespace=kube-logging
 
 # debug -> kubectl port-forward es-cluster-0 9200:9200 --namespace=kube-logging
 
-kubectl create -f efk/kibana.yaml
+kubectl create -f efk/kibana/kibana.yaml
 kubectl rollout status deployment/kibana --namespace=kube-logging
 
 # debug -> kubectl port-forward kibana-6c9fb4b5b7-plbg2 5601:5601 --namespace=kube-logging // replace pod name
 
+kubectl create -f efk/logstash/logstash-config.yml
+kubectl create -f efk/logstash/logstash-deployment.yml
 __________________________________________________________
 
 helm install tetragon cilium/tetragon -f tetragon.yaml -n kube-system
@@ -29,7 +31,7 @@ helm install tetragon cilium/tetragon -f tetragon.yaml -n kube-system
 __________________________________________________________
 
 
-kubectl create -f efk/filebeat-kubernetes.yaml
+kubectl create -f efk/filebeat/filebeat-kubernetes.yaml
 
 __________________________________________________________
 
