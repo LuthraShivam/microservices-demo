@@ -50,3 +50,6 @@ kubectl exec -it shivam-privilege-app -- bash
 For single mining binary sigkill:
 
 kubectl apply -f tracing_policies/mining-binary-sigkill.yaml
+_______
+
+kubectl rollout restart -n kube-system ds/tetragon
